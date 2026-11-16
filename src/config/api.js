@@ -26,9 +26,22 @@ apiClient.interceptors.request.use(
   (config) => {
     if (IS_SUPABASE && SUPABASE_KEY) {
       config.headers['apikey'] = SUPABASE_KEY
-      if (!config.headers['Authorization']) {
-        config.headers['Authorization'] = `Bearer ${SUPABASE_KEY}`
+
+      // Ambil token admin jika sedang login
+      let userToken = null
+      try {
+        const rawSession = localStorage.getItem('tentcraft_auth_session')
+        if (rawSession) {
+          const session = JSON.parse(rawSession)
+          if (session?.token && session.token !== 'offline-admin-jwt-token') {
+            userToken = session.token
+          }
+        }
+      } catch (e) {
+        // Abaikan
       }
+
+      config.headers['Authorization'] = `Bearer ${userToken || SUPABASE_KEY}`
     }
     return config
   },

@@ -1,6 +1,8 @@
+import axios from 'axios'
 import { INITIAL_TENTS } from '../data/tents'
 import queryCache from '../utils/queryCache'
 import { generateId, matchesSearch, matchesCategory, sortItems } from '../utils/helpers'
+import { BASE_URL, SUPABASE_KEY, IS_SUPABASE } from '../config/api'
 
 const STORAGE_KEY = 'tentcraft_products_db'
 
@@ -55,7 +57,7 @@ export const normalizeTent = (item) => {
     category: item.category || item.type || 'Tenda Dome',
     type: item.category || item.type || 'Tenda Dome',
     capacity: item.capacity || '2-4 Orang',
-    waterproofRating: item.waterproofRating || 'PU 3000mm',
+    waterproofRating: item.waterproofRating || item.waterproof_rating || 'PU 3000mm',
     price: Number(item.price || 0),
     stock: item.stock !== undefined ? Number(item.stock) : 10,
     weight: item.weight || '2.0 kg',
@@ -65,12 +67,78 @@ export const normalizeTent = (item) => {
     features: Array.isArray(item.features) ? item.features : [],
     image: img,
     image_url: img,
-    createdAt: item.createdAt || new Date().toISOString(),
-    updatedAt: item.updatedAt || new Date().toISOString(),
+    createdAt: item.createdAt || item.created_at || new Date().toISOString(),
+    updatedAt: item.updatedAt || item.updated_at || new Date().toISOString(),
+  }
+}
+
+/**
+ * Konversi objek Supabase DB row ke format Frontend
+ */
+export const fromSupabaseTent = (row) => {
+  if (!row) return null
+  return normalizeTent({
+    id: row.id,
+    name: row.name,
+    category: row.category,
+    type: row.type || row.category,
+    capacity: row.capacity,
+    waterproofRating: row.waterproof_rating || 'PU 3000mm',
+    price: Number(row.price),
+    stock: Number(row.stock),
+    weight: row.weight,
+    rating: Number(row.rating || 5.0),
+    image: row.image || '/tents/dome.svg',
+    description: row.description || '',
+    specs: row.specs || [],
+    features: row.features || [],
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  })
+}
+
+/**
+ * Konversi objek Frontend ke format Supabase DB row
+ */
+export const toSupabaseTent = (item) => {
+  return {
+    id: String(item.id),
+    name: item.name,
+    category: item.category,
+    type: item.category,
+    capacity: item.capacity,
+    waterproof_rating: item.waterproofRating || 'PU 3000mm',
+    price: Number(item.price),
+    stock: Number(item.stock),
+    weight: item.weight || '',
+    rating: Number(item.rating || 5.0),
+    image: item.image || '/tents/dome.svg',
+    description: item.description || '',
+    specs: item.specs || [],
+    features: item.features || [],
+    updated_at: new Date().toISOString(),
   }
 }
 
 class TentService {
+  /**
+   * Mengambil token auth admin jika sedang login
+   */
+  _getAuthToken() {
+    try {
+      const raw = localStorage.getItem('tentcraft_auth_session')
+      if (raw) {
+        const parsed = JSON.parse(raw)
+        if (parsed?.token && parsed.token !== 'offline-admin-jwt-token') {
+          return parsed.token
+        }
+      }
+    } catch {
+      // Abaikan
+    }
+    return null
+  }
+
   /**
    * Internal helper to load current inventory from localStorage or seed initial data.
    */
@@ -103,14 +171,37 @@ class TentService {
 
   /**
    * Fetch a paginated, filterable, and sortable list of tent products.
+   * Sinkron otomatis dengan Supabase Database (Cloud) agar tampil di semua device!
    */
   async getTents(params = {}) {
-    // SWR Cache Lookup
-    const cacheKey = ['tents', JSON.stringify(params)]
-    const cached = queryCache.get(cacheKey)
+    let all = []
+    let isCloudLoaded = false
 
-    // Load data
-    const all = this._loadAll()
+    // 1. Ambil data realtime dari Supabase Cloud DB
+    if (IS_SUPABASE && BASE_URL && SUPABASE_KEY) {
+      try {
+        const res = await axios.get(`${BASE_URL}/rest/v1/tents?select=*&order=created_at.desc`, {
+          headers: {
+            apikey: SUPABASE_KEY,
+            Authorization: `Bearer ${SUPABASE_KEY}`,
+          },
+          timeout: 4500,
+        })
+
+        if (Array.isArray(res.data) && res.data.length > 0) {
+          all = res.data.map(fromSupabaseTent)
+          this._saveAll(all) // Perbarui mirror lokal di device ini
+          isCloudLoaded = true
+        }
+      } catch (cloudErr) {
+        console.info('[TentService] Koneksi cloud offline, menggunakan penyimpanan lokal:', cloudErr.message)
+      }
+    }
+
+    // 2. Jika offline atau cloud gagal, gunakan data lokal (Offline-First PWA)
+    if (!isCloudLoaded || all.length === 0) {
+      all = this._loadAll()
+    }
 
     let filtered = all.filter(
       (item) =>
@@ -139,7 +230,6 @@ class TentService {
       },
     }
 
-    queryCache.set(cacheKey, result)
     return result
   }
 
@@ -160,6 +250,7 @@ class TentService {
 
   /**
    * Create a new tent product.
+   * Menyimpan ke LocalStorage DAN menyinkronkan ke Supabase Cloud DB agar tampil di device lain.
    */
   async createTent(data) {
     if (!data.name || !data.name.trim()) {
@@ -177,8 +268,32 @@ class TentService {
       updatedAt: new Date().toISOString(),
     })
 
+    // 1. Simpan segera ke LocalStorage
     all.unshift(newTent)
     this._saveAll(all)
+
+    // 2. Sinkronkan ke Supabase Cloud (agar device lain dapat melihatnya)
+    if (IS_SUPABASE && BASE_URL && SUPABASE_KEY) {
+      try {
+        const token = this._getAuthToken()
+        await axios.post(
+          `${BASE_URL}/rest/v1/tents`,
+          toSupabaseTent(newTent),
+          {
+            headers: {
+              apikey: SUPABASE_KEY,
+              Authorization: `Bearer ${token || SUPABASE_KEY}`,
+              Prefer: 'return=representation',
+              'Content-Type': 'application/json',
+            },
+            timeout: 6000,
+          },
+        )
+        console.log('[TentService] Produk tenda berhasil disinkronkan ke Supabase!')
+      } catch (err) {
+        console.warn('[TentService] Gagal kirim ke Supabase (tersimpan di lokal):', err.response?.data || err.message)
+      }
+    }
 
     // Invalidate caches
     queryCache.invalidateQueries('tents')
@@ -186,7 +301,7 @@ class TentService {
     return {
       success: true,
       data: newTent,
-      message: 'Produk tenda berhasil ditambahkan ke katalog!',
+      message: 'Produk tenda berhasil ditambahkan dan disinkronkan!',
     }
   }
 
@@ -209,6 +324,28 @@ class TentService {
 
     all[index] = updated
     this._saveAll(all)
+
+    // Sync perubahan ke Supabase
+    if (IS_SUPABASE && BASE_URL && SUPABASE_KEY) {
+      try {
+        const token = this._getAuthToken()
+        await axios.patch(
+          `${BASE_URL}/rest/v1/tents?id=eq.${id}`,
+          toSupabaseTent(updated),
+          {
+            headers: {
+              apikey: SUPABASE_KEY,
+              Authorization: `Bearer ${token || SUPABASE_KEY}`,
+              Prefer: 'return=representation',
+              'Content-Type': 'application/json',
+            },
+            timeout: 6000,
+          },
+        )
+      } catch (err) {
+        console.warn('[TentService] Gagal update ke Supabase:', err.response?.data || err.message)
+      }
+    }
 
     // Invalidate caches
     queryCache.invalidateQueries('tents')
@@ -235,13 +372,29 @@ class TentService {
 
     this._saveAll(filtered)
 
+    // Sync penghapusan ke Supabase
+    if (IS_SUPABASE && BASE_URL && SUPABASE_KEY) {
+      try {
+        const token = this._getAuthToken()
+        await axios.delete(`${BASE_URL}/rest/v1/tents?id=eq.${id}`, {
+          headers: {
+            apikey: SUPABASE_KEY,
+            Authorization: `Bearer ${token || SUPABASE_KEY}`,
+          },
+          timeout: 6000,
+        })
+      } catch (err) {
+        console.warn('[TentService] Gagal delete di Supabase:', err.response?.data || err.message)
+      }
+    }
+
     // Invalidate caches
     queryCache.invalidateQueries('tents')
     queryCache.invalidateQueries(['tent', id])
 
     return {
       success: true,
-      message: 'Produk tenda berhasil dihapus dari katalog.',
+      message: 'Produk tenda berhasil dihapus.',
     }
   }
 
@@ -261,4 +414,3 @@ class TentService {
 }
 
 export default new TentService()
-
