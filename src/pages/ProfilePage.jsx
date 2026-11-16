@@ -247,12 +247,6 @@ export default function ProfilePage({ onNavigate }) {
           </div>
         </div>
 
-        {/* Bio / Armorer Notes */}
-        <div className="student-bio-box">
-          <span className="bio-label">Catatan Pengembang &amp; Minat Teknis</span>
-          <p className="bio-text">{profile.bio}</p>
-        </div>
-
         {/* Stats Grid */}
         <div className="profile-stats-grid">
           <div
@@ -457,17 +451,6 @@ export default function ProfilePage({ onNavigate }) {
                   className="form-input"
                   value={editProdi}
                   onChange={(e) => setEditProdi(e.target.value)}
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label" htmlFor="edit-bio">Catatan Bio Pengembang</label>
-                <textarea
-                  id="edit-bio"
-                  rows={3}
-                  className="form-textarea"
-                  value={editBio}
-                  onChange={(e) => setEditBio(e.target.value)}
                 />
               </div>
 
