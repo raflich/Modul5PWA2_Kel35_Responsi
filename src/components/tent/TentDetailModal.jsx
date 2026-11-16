@@ -33,6 +33,7 @@ export default function TentDetailModal({
   const profile = userService.getUserProfile()
   const [reviewerName, setReviewerName] = useState(() => profile.name || 'Pengunjung')
   const [reviews, setReviews] = useState([])
+  const [ratingStats, setRatingStats] = useState(() => reviewService.getRatingStats(tent?.id))
   const [rating, setRating] = useState(5)
   const [hoverRating, setHoverRating] = useState(0)
   const [comment, setComment] = useState('')
@@ -50,6 +51,7 @@ export default function TentDetailModal({
   useEffect(() => {
     if (tent?.id) {
       setReviews(reviewService.getReviews(tent.id))
+      setRatingStats(reviewService.getRatingStats(tent.id))
     }
   }, [tent?.id])
 
@@ -67,7 +69,9 @@ export default function TentDetailModal({
         rating,
         comment: comment.trim(),
       })
-      setReviews([newRev, ...reviews])
+      const updatedRev = [newRev, ...reviews]
+      setReviews(updatedRev)
+      setRatingStats(reviewService.getRatingStats(tent.id))
       setComment('')
       setRating(5)
       setReviewMsg('Ulasan dan rating Anda berhasil dipublikasikan!')
@@ -87,6 +91,7 @@ export default function TentDetailModal({
   const handleDeleteReview = (reviewId) => {
     reviewService.deleteReview(tent.id, reviewId)
     setReviews(reviewService.getReviews(tent.id))
+    setRatingStats(reviewService.getRatingStats(tent.id))
   }
 
   return (
@@ -128,9 +133,19 @@ export default function TentDetailModal({
                 <span className="detail-stock-badge">
                   <Package size={14} /> Stok Tersedia: <strong>{tent.stock} unit</strong>
                 </span>
-                <span className="detail-rating-badge">
-                  <Star size={14} fill="var(--amber)" stroke="var(--amber)" /> {tent.rating} / 5.0
-                </span>
+                {ratingStats.hasReviews ? (
+                  <span className="detail-rating-badge" title={`Rata-rata rating dari ${ratingStats.count} ulasan`}>
+                    <Star size={14} fill="var(--amber)" stroke="var(--amber)" /> {ratingStats.average.toFixed(1)} / 5.0 ({ratingStats.count} ulasan)
+                  </span>
+                ) : (
+                  <span
+                    className="detail-rating-badge"
+                    style={{ background: '#f8fafc', color: '#64748b', borderColor: '#e2e8f0' }}
+                    title="Belum ada ulasan pembeli"
+                  >
+                    <Star size={14} fill="none" stroke="#94a3b8" /> Belum ada ulasan
+                  </span>
+                )}
               </div>
             </div>
 

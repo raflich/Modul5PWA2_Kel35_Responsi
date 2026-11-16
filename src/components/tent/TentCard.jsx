@@ -1,8 +1,10 @@
+import { useState, useEffect } from 'react'
 import { Users, Droplets, Star, Package, Edit, Trash2 } from 'lucide-react'
 import { formatRupiah } from '../../utils/helpers'
 import FavoriteButton from '../common/FavoriteButton'
 import ShareButton from '../common/ShareButton'
 import { useAuth } from '../../hooks/useAuth'
+import reviewService from '../../services/reviewService'
 
 export default function TentCard({
   tent,
@@ -12,6 +14,19 @@ export default function TentCard({
   showManageActions = false,
 }) {
   const { isAdmin } = useAuth()
+  const [ratingStats, setRatingStats] = useState(() => reviewService.getRatingStats(tent?.id))
+
+  useEffect(() => {
+    setRatingStats(reviewService.getRatingStats(tent?.id))
+
+    const handleReviewsChange = (e) => {
+      if (!e.detail?.tentId || e.detail.tentId === tent?.id) {
+        setRatingStats(reviewService.getRatingStats(tent?.id))
+      }
+    }
+    window.addEventListener('tentcraft:reviews-change', handleReviewsChange)
+    return () => window.removeEventListener('tentcraft:reviews-change', handleReviewsChange)
+  }, [tent?.id])
   return (
     <article
       className="tent-card"
@@ -78,9 +93,15 @@ export default function TentCard({
           <span className="tent-meta-item" title="Tingkat Ketahanan Air">
             <Droplets size={14} /> {tent.waterproofRating}
           </span>
-          <span className="tent-meta-item tent-rating" title="Rating Pengguna">
-            <Star size={13} fill="var(--amber)" stroke="var(--amber)" /> {tent.rating}
-          </span>
+          {ratingStats.hasReviews ? (
+            <span className="tent-meta-item tent-rating" title={`Rata-rata dari ${ratingStats.count} ulasan`}>
+              <Star size={13} fill="var(--amber)" stroke="var(--amber)" /> {ratingStats.average.toFixed(1)} ({ratingStats.count})
+            </span>
+          ) : (
+            <span className="tent-meta-item" style={{ color: '#94a3b8' }} title="Belum ada ulasan">
+              <Star size={13} fill="none" stroke="#94a3b8" /> Belum ada ulasan
+            </span>
+          )}
         </div>
 
         <h3 className="tent-card-title">{tent.name}</h3>

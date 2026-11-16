@@ -81,6 +81,38 @@ class ReviewService {
     return DEFAULT_SAMPLE_REVIEWS[tentId] || []
   }
 
+  getRatingStats(tentId) {
+    const reviews = this.getReviews(tentId)
+    if (!reviews || reviews.length === 0) {
+      return {
+        average: 0,
+        count: 0,
+        hasReviews: false,
+        display: 'Belum ada rating',
+        shortDisplay: 'Belum ada rating',
+      }
+    }
+    const sum = reviews.reduce((acc, r) => acc + (Number(r.rating) || 0), 0)
+    const avg = Number((sum / reviews.length).toFixed(1))
+    return {
+      average: avg,
+      count: reviews.length,
+      hasReviews: true,
+      display: `${avg.toFixed(1)} / 5.0 (${reviews.length} ulasan)`,
+      shortDisplay: `${avg.toFixed(1)} (${reviews.length})`,
+    }
+  }
+
+  _notifyChange(tentId) {
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(
+        new CustomEvent('tentcraft:reviews-change', {
+          detail: { tentId },
+        }),
+      )
+    }
+  }
+
   addReview(tentId, { userName, rating, comment, userId }) {
     if (!comment || !comment.trim()) {
       throw new Error('Komentar ulasan wajib diisi.')
@@ -106,6 +138,8 @@ class ReviewService {
     } catch (e) {
       console.error('[ReviewService] Error saving review:', e)
     }
+
+    this._notifyChange(tentId)
     return newRev
   }
 
@@ -114,6 +148,7 @@ class ReviewService {
     const filtered = reviews.filter((r) => r.id !== reviewId)
     try {
       localStorage.setItem(this._getStorageKey(tentId), JSON.stringify(filtered))
+      this._notifyChange(tentId)
       return true
     } catch {
       return false
