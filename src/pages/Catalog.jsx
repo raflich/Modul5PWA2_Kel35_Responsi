@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react'
-import { Plus, RefreshCw, AlertCircle, Sparkles, Compass, Tent } from 'lucide-react'
+import { Plus, RefreshCw, AlertCircle, Compass, Tent } from 'lucide-react'
 import { useTents } from '../hooks/useTents'
 import TentCard from '../components/tent/TentCard'
 import AdvancedFilter from '../components/common/AdvancedFilter'
@@ -7,8 +7,10 @@ import Pagination from '../components/common/Pagination'
 import TentDetailModal from '../components/tent/TentDetailModal'
 import ConfirmModal from '../components/modals/ConfirmModal'
 import tentService from '../services/tentService'
+import { useAuth } from '../hooks/useAuth'
 
 export default function Catalog({ onNavigate, initialTentId }) {
+  const { isAdmin } = useAuth()
   const { tents, loading, error, refetch } = useTents()
 
   // Filters & Sorting state
@@ -114,32 +116,12 @@ export default function Catalog({ onNavigate, initialTentId }) {
       {/* Hero Masthead */}
       <section className="catalog-hero">
         <div className="hero-content">
-          <div className="hero-badge">
-            <Sparkles size={14} /> PWA Storefront — Alat Tenda &amp; Camping
-          </div>
           <h1 className="hero-title">
             Jelajahi Alat Tenda Terbaik untuk Petualangan Anda
           </h1>
           <p className="hero-subtitle">
             Katalog lengkap tenda dome ultralight, tunnel family tent, flysheet anti-badai, pasak titanium, dan perlengkapan camping berstandar pendakian gunung.
           </p>
-
-          <div className="hero-stats-row">
-            <div className="hero-stat">
-              <span className="hero-stat-num">{tents.length}</span>
-              <span className="hero-stat-lbl">Pilihan Alat</span>
-            </div>
-            <div className="hero-stat-sep">/</div>
-            <div className="hero-stat">
-              <span className="hero-stat-num">100%</span>
-              <span className="hero-stat-lbl">Bekerja Offline</span>
-            </div>
-            <div className="hero-stat-sep">/</div>
-            <div className="hero-stat">
-              <span className="hero-stat-num">PU 5000</span>
-              <span className="hero-stat-lbl">Max Waterproof</span>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -195,7 +177,7 @@ export default function Catalog({ onNavigate, initialTentId }) {
             >
               Reset Filter Pencarian
             </button>
-            {onNavigate && (
+            {onNavigate && isAdmin && (
               <button
                 type="button"
                 className="btn btn--primary btn--sm"
@@ -257,3 +239,4 @@ export default function Catalog({ onNavigate, initialTentId }) {
     </div>
   )
 }
+

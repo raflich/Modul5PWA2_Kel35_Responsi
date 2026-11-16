@@ -1,26 +1,26 @@
 :root {
-  --bg-main: #0b1120;
-  --bg-surface: #111827;
-  --bg-card: #1e293b;
-  --bg-card-hover: #24344d;
-  
-  --ink: #f8fafc;
-  --steel: #94a3b8;
-  --line: rgba(255, 255, 255, 0.1);
-  --line-strong: rgba(255, 255, 255, 0.2);
+  --bg-main: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f1f5f9;
 
-  --emerald: #10b981;
-  --emerald-hover: #059669;
+  --ink: #0f172a;
+  --steel: #64748b;
+  --line: #e2e8f0;
+  --line-strong: #cbd5e1;
+
+  --emerald: #059669;
+  --emerald-hover: #047857;
   --emerald-dark: #064e3b;
-  --emerald-glow: rgba(16, 185, 129, 0.25);
+  --emerald-glow: rgba(5, 150, 105, 0.15);
 
-  --amber: #f59e0b;
-  --amber-dark: #78350f;
-  --sky: #38bdf8;
-  --rose: #f43f5e;
-  --rose-glow: rgba(244, 63, 94, 0.2);
+  --amber: #d97706;
+  --amber-dark: #b45309;
+  --sky: #0284c7;
+  --rose: #e11d48;
+  --rose-glow: rgba(225, 29, 72, 0.12);
 
-  color-scheme: dark;
+  color-scheme: light;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   font-size: 16px;
   line-height: 1.6;
@@ -44,7 +44,7 @@ html, body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  color: #ffffff;
+  color: #0f172a;
   font-weight: 700;
   line-height: 1.3;
 }

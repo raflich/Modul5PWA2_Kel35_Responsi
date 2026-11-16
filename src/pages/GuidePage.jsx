@@ -79,41 +79,7 @@ export default function GuidePage() {
         </div>
       </section>
 
-      {/* 2. FAQ Accordion */}
-      <section className="guide-section">
-        <h2 className="section-title">Pertanyaan yang Sering Diajukan (FAQ)</h2>
-        <div className="faq-grid">
-          <div className="faq-item">
-            <h4>Bagaimana cara merawat tenda setelah dipakai mendaki?</h4>
-            <p>
-              Bersihkan kotoran lumpur dengan spons halus dan air hangat (jangan gunakan deterjen keras). Angin-anginkan hingga 100% kering sebelum dilipat ke dalam sarung untuk mencegah jamur dan pengelupasan lapisan waterproof seal.
-            </p>
-          </div>
-
-          <div className="faq-item">
-            <h4>Apakah aplikasi ini dapat bekerja tanpa kuota internet?</h4>
-            <p>
-              Ya! TentCraft dibangun dengan Service Worker PWA modern dan multi-tier caching. Anda dapat menjelajahi katalog, menyimpan favorit, dan mencatat formulir bahkan saat berada di basecamp gunung tanpa sinyal.
-            </p>
-          </div>
-
-          <div className="faq-item">
-            <h4>Bagaimana prosedur persewaan tenda di TentCraft?</h4>
-            <p>
-              Pilih tenda di katalog, masukkan ke daftar favorit/wishlist, dan lakukan simulasi reservasi. Anda dapat mengambil unit di outlet kami dengan jaminan kartu identitas resmi (KTP/KTM).
-            </p>
-          </div>
-
-          <div className="faq-item">
-            <h4>Apakah pasak dan tali sudah termasuk di dalam paket tenda?</h4>
-            <p>
-              Seluruh tenda dome dan tunnel yang kami sediakan sudah termasuk paket lengkap: inner tent, rainfly, tiang frame, pasak tanah, tali guyline reflektif, dan tas kompresi bawaan.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. Outlet Location & Contact */}
+      {/* Outlet Location & Contact */}
       <section className="guide-section">
         <h2 className="section-title">Kunjungi Outlet &amp; Basecamp TentCraft</h2>
         <div className="contact-info-grid">
@@ -165,3 +131,4 @@ export default function GuidePage() {
     </div>
   )
 }
+

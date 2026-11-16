@@ -5,22 +5,22 @@
       <stop offset="100%" stop-color="#0f766e" />
     </linearGradient>
   </defs>
-  <rect width="400" height="300" rx="16" fill="#1e293b" />
-  <ellipse cx="200" cy="245" rx="175" ry="22" fill="#0f172a" />
+  <rect width="400" height="300" rx="16" fill="#f8fafc" />
+  <ellipse cx="200" cy="245" rx="175" ry="18" fill="#e2e8f0" />
   <!-- Large Cabin / Family Tent Structure -->
   <!-- Main High Cabin Body -->
-  <polygon points="90,120 310,120 360,230 40,230" fill="url(#famGrad)" stroke="#34d399" stroke-width="3" />
+  <polygon points="90,120 310,120 360,230 40,230" fill="url(#famGrad)" stroke="#047857" stroke-width="3" />
   <!-- Roof Ridge -->
-  <polygon points="200,80 90,120 310,120" fill="#047857" stroke="#34d399" stroke-width="2.5" />
+  <polygon points="200,80 90,120 310,120" fill="#047857" stroke="#065f46" stroke-width="2.5" />
   <!-- Canopy Extension -->
-  <polygon points="130,120 270,120 290,200 110,200" fill="#f59e0b" opacity="0.9" stroke="#fbbf24" stroke-width="2" />
+  <polygon points="130,120 270,120 290,200 110,200" fill="#f59e0b" opacity="0.9" stroke="#d97706" stroke-width="2" />
   <!-- Front Awning Poles -->
-  <line x1="110" y1="200" x2="110" y2="240" stroke="#cbd5e1" stroke-width="3.5" />
-  <line x1="290" y1="200" x2="290" y2="240" stroke="#cbd5e1" stroke-width="3.5" />
+  <line x1="110" y1="200" x2="110" y2="240" stroke="#475569" stroke-width="3.5" />
+  <line x1="290" y1="200" x2="290" y2="240" stroke="#475569" stroke-width="3.5" />
   <!-- Twin Mesh Doors -->
-  <rect x="135" y="160" width="55" height="70" rx="4" fill="#064e3b" stroke="#6ee7b7" stroke-width="2" />
-  <rect x="210" y="160" width="55" height="70" rx="4" fill="#064e3b" stroke="#6ee7b7" stroke-width="2" />
+  <rect x="135" y="160" width="55" height="70" rx="4" fill="#064e3b" stroke="#34d399" stroke-width="2" />
+  <rect x="210" y="160" width="55" height="70" rx="4" fill="#064e3b" stroke="#34d399" stroke-width="2" />
   <!-- Guy lines -->
-  <line x1="200" y1="80" x2="20" y2="240" stroke="#fde047" stroke-width="2" stroke-dasharray="4,4" />
-  <line x1="200" y1="80" x2="380" y2="240" stroke="#fde047" stroke-width="2" stroke-dasharray="4,4" />
+  <line x1="200" y1="80" x2="20" y2="240" stroke="#d97706" stroke-width="2" stroke-dasharray="4,4" />
+  <line x1="200" y1="80" x2="380" y2="240" stroke="#d97706" stroke-width="2" stroke-dasharray="4,4" />
 </svg>

@@ -228,3 +228,4 @@ Proyek ini telah dilengkapi dengan berkas `vercel.json` dan struktur yang 100% k
    - Masukkan data produk tenda baru beserta spesifikasinya, lalu klik simpan.
    - Data akan langsung muncul di katalog dan tersimpan permanen pada penyimpanan lokal.
    - Anda juga dapat mengedit atau menghapus produk dengan aman melalui dialog konfirmasi.
+

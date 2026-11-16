@@ -55,3 +55,4 @@ export default function ShareButton({ tent, size = 16, className = '' }) {
     </button>
   )
 }
+

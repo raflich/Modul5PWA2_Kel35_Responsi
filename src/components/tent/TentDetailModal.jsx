@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import {
   X,
   Users,
@@ -12,10 +12,15 @@ import {
   Package,
   Layers,
   ShieldCheck,
+  MessageSquare,
+  ThumbsUp,
+  Send,
 } from 'lucide-react'
 import { formatRupiah } from '../../utils/helpers'
 import FavoriteButton from '../common/FavoriteButton'
 import ShareButton from '../common/ShareButton'
+import reviewService from '../../services/reviewService'
+import userService from '../../services/userService'
 
 export default function TentDetailModal({
   tent,
@@ -23,6 +28,15 @@ export default function TentDetailModal({
   onEdit,
   onDelete,
 }) {
+  const profile = userService.getUserProfile()
+  const [reviewerName, setReviewerName] = useState(() => profile.name || 'Pengunjung')
+  const [reviews, setReviews] = useState([])
+  const [rating, setRating] = useState(5)
+  const [hoverRating, setHoverRating] = useState(0)
+  const [comment, setComment] = useState('')
+  const [submittingReview, setSubmittingReview] = useState(false)
+  const [reviewMsg, setReviewMsg] = useState('')
+
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') onClose()
@@ -31,7 +45,47 @@ export default function TentDetailModal({
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [onClose])
 
+  useEffect(() => {
+    if (tent?.id) {
+      setReviews(reviewService.getReviews(tent.id))
+    }
+  }, [tent?.id])
+
   if (!tent) return null
+
+  const handleAddReview = (e) => {
+    e.preventDefault()
+    if (!comment.trim()) return
+
+    try {
+      setSubmittingReview(true)
+      const newRev = reviewService.addReview(tent.id, {
+        userName: reviewerName.trim() || profile.name || 'Pengunjung',
+        userId: profile.userId,
+        rating,
+        comment: comment.trim(),
+      })
+      setReviews([newRev, ...reviews])
+      setComment('')
+      setRating(5)
+      setReviewMsg('Ulasan dan rating Anda berhasil dipublikasikan!')
+      setTimeout(() => setReviewMsg(''), 3000)
+    } catch (err) {
+      alert(err.message || 'Gagal mengirim ulasan.')
+    } finally {
+      setSubmittingReview(false)
+    }
+  }
+
+  const handleToggleLike = (reviewId) => {
+    reviewService.toggleLike(tent.id, reviewId, profile.userId)
+    setReviews(reviewService.getReviews(tent.id))
+  }
+
+  const handleDeleteReview = (reviewId) => {
+    reviewService.deleteReview(tent.id, reviewId)
+    setReviews(reviewService.getReviews(tent.id))
+  }
 
   return (
     <div className="modal-backdrop" onClick={onClose} role="presentation">
@@ -164,6 +218,163 @@ export default function TentDetailModal({
               </ul>
             </div>
           )}
+
+          {/* ===================================================================
+           * REVIEWS & RATINGS SECTION
+           * =================================================================== */}
+          <div className="detail-section reviews-section">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <MessageSquare size={18} color="var(--emerald)" />
+                <h4 className="detail-section-title" style={{ margin: 0 }}>
+                  Ulasan &amp; Rating Pembeli ({reviews.length})
+                </h4>
+              </div>
+            </div>
+
+            {/* Review Success Toast */}
+            {reviewMsg && (
+              <div className="toast toast--success" style={{ padding: '8px 12px', fontSize: '0.85rem', marginBottom: '14px' }}>
+                <CheckCircle size={16} /> {reviewMsg}
+              </div>
+            )}
+
+            {/* Add Review Form */}
+            <form onSubmit={handleAddReview} className="add-review-box">
+              <div className="add-review-header">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, minWidth: '240px' }}>
+                  <label htmlFor="reviewer-name-input" style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--ink)', whiteSpace: 'nowrap' }}>
+                    Nama Pengunjung / Pengulas:
+                  </label>
+                  <input
+                    id="reviewer-name-input"
+                    type="text"
+                    className="form-input"
+                    style={{ padding: '6px 12px', fontSize: '0.88rem', flex: 1, maxWidth: '240px' }}
+                    value={reviewerName}
+                    onChange={(e) => setReviewerName(e.target.value)}
+                    placeholder="Nama Pengunjung..."
+                  />
+                </div>
+
+                {/* 5-Star Interactive Rating Picker */}
+                <div className="star-picker" role="radiogroup" aria-label="Pilih Bintang">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      className="star-pick-btn"
+                      onClick={() => setRating(star)}
+                      onMouseEnter={() => setHoverRating(star)}
+                      onMouseLeave={() => setHoverRating(0)}
+                      title={`Beri ${star} bintang`}
+                      aria-label={`${star} Bintang`}
+                    >
+                      <Star
+                        size={20}
+                        fill={(hoverRating || rating) >= star ? '#d97706' : 'none'}
+                        stroke={(hoverRating || rating) >= star ? '#d97706' : '#94a3b8'}
+                      />
+                    </button>
+                  ))}
+                  <span className="star-rating-count">({rating} / 5)</span>
+                </div>
+              </div>
+
+              <textarea
+                className="form-textarea review-textarea"
+                rows={3}
+                placeholder="Bagikan pengalaman pemakaian tenda ini (contoh: ketahanan hujan badai, kekuatan pasak tanah, sirkulasi udara, atau kemudahan pasang)..."
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                required
+              />
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
+                <button
+                  type="submit"
+                  className="btn btn--primary btn--sm"
+                  disabled={submittingReview || !comment.trim()}
+                >
+                  <Send size={14} />
+                  <span>{submittingReview ? 'Mengirim...' : 'Kirim Ulasan'}</span>
+                </button>
+              </div>
+            </form>
+
+            {/* Reviews List */}
+            <div className="reviews-list">
+              {reviews.length === 0 ? (
+                <div style={{ padding: '16px', textAlign: 'center', color: 'var(--steel)', background: '#f8fafc', borderRadius: '8px' }}>
+                  Belum ada ulasan untuk alat tenda ini. Jadilah yang pertama memberikan penilaian!
+                </div>
+              ) : (
+                reviews.map((rev) => {
+                  const isAuthor = rev.userId === profile.userId
+                  const hasLiked = reviewService.hasLiked(rev.id, profile.userId)
+
+                  return (
+                    <div key={rev.id} className="review-item-card">
+                      <div className="review-top-row">
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <div className="review-avatar">
+                            {(rev.userName || 'P')[0].toUpperCase()}
+                          </div>
+                          <div>
+                            <span className="review-author">{rev.userName}</span>
+                            <div className="review-stars">
+                              {[1, 2, 3, 4, 5].map((s) => (
+                                <Star
+                                  key={s}
+                                  size={13}
+                                  fill={s <= rev.rating ? '#d97706' : 'none'}
+                                  stroke={s <= rev.rating ? '#d97706' : '#cbd5e1'}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          <span className="review-date">
+                            {new Date(rev.createdAt).toLocaleDateString('id-ID', {
+                              day: 'numeric',
+                              month: 'short',
+                              year: 'numeric',
+                            })}
+                          </span>
+                          {isAuthor && (
+                            <button
+                              type="button"
+                              className="icon-btn btn--danger-subtle btn--xs"
+                              onClick={() => handleDeleteReview(rev.id)}
+                              title="Hapus ulasan Anda"
+                            >
+                              <Trash2 size={12} />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
+                      <p className="review-comment">{rev.comment}</p>
+
+                      <div className="review-footer-row">
+                        <button
+                          type="button"
+                          className={`review-like-btn ${hasLiked ? 'review-like-btn--active' : ''}`}
+                          onClick={() => handleToggleLike(rev.id)}
+                          title="Tandai ulasan ini bermanfaat"
+                        >
+                          <ThumbsUp size={13} />
+                          <span>Membantu ({rev.likes || 0})</span>
+                        </button>
+                      </div>
+                    </div>
+                  )
+                })
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Modal Footer Actions */}
@@ -182,6 +393,7 @@ export default function TentDetailModal({
                   onClose()
                   onEdit(tent)
                 }}
+                title="Edit spesifikasi produk alat tenda ini"
               >
                 <Edit size={14} /> Edit Produk
               </button>

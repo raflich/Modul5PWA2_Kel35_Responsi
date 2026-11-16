@@ -17,8 +17,12 @@ import { formatRupiah } from '../utils/helpers'
 import ConfirmModal from '../components/modals/ConfirmModal'
 import TentDetailModal from '../components/tent/TentDetailModal'
 import tentService from '../services/tentService'
+import { useAuth } from '../hooks/useAuth'
+import LoginModal from '../components/modals/LoginModal'
+import { Lock, LogIn } from 'lucide-react'
 
 export default function ManagePage({ onNavigate }) {
+  const { isAdmin } = useAuth()
   const { tents, loading, refetch } = useTents()
   const [search, setSearch] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('All')
@@ -27,6 +31,7 @@ export default function ManagePage({ onNavigate }) {
   const [selectedTent, setSelectedTent] = useState(null)
   const [feedback, setFeedback] = useState('')
   const [resetModalOpen, setResetModalOpen] = useState(false)
+  const [loginModalOpen, setLoginModalOpen] = useState(false)
 
   // Calculations
   const stats = useMemo(() => {
@@ -78,6 +83,76 @@ export default function ManagePage({ onNavigate }) {
     } catch (err) {
       alert(err.message || 'Gagal reset data.')
     }
+  }
+
+  if (!isAdmin) {
+    return (
+      <div className="manage-page">
+        <div
+          className="state-box"
+          style={{
+            minHeight: '380px',
+            textAlign: 'center',
+            padding: '40px 20px',
+            background: '#ffffff',
+            borderRadius: '16px',
+            border: '1px solid #e2e8f0',
+          }}
+        >
+          <div
+            style={{
+              width: '64px',
+              height: '64px',
+              borderRadius: '50%',
+              background: '#fee2e2',
+              color: '#dc2626',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 16px',
+            }}
+          >
+            <Lock size={30} />
+          </div>
+          <h2 style={{ fontSize: '1.35rem', fontWeight: 700, color: '#0f172a', marginBottom: '8px' }}>
+            Akses Khusus Pengelola Toko (Admin)
+          </h2>
+          <p
+            style={{
+              maxWidth: '480px',
+              margin: '0 auto 20px',
+              color: '#64748b',
+              fontSize: '0.92rem',
+              lineHeight: 1.6,
+            }}
+          >
+            Halaman Kelola Inventaris Tenda (CRUD) dilindungi sistem otentikasi. Anda sedang dalam{' '}
+            <strong>Mode Pengunjung</strong>. Silakan login sebagai Admin untuk menambah, mengedit,
+            atau menghapus data produk.
+          </p>
+          <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              className="btn btn--outline"
+              onClick={() => onNavigate && onNavigate('Catalog')}
+            >
+              Kembali ke Katalog
+            </button>
+            <button
+              type="button"
+              className="btn btn--primary"
+              onClick={() => setLoginModalOpen(true)}
+            >
+              <LogIn size={16} /> Login sebagai Admin
+            </button>
+          </div>
+          <LoginModal
+            isOpen={loginModalOpen}
+            onClose={() => setLoginModalOpen(false)}
+          />
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -328,3 +403,4 @@ export default function ManagePage({ onNavigate }) {
     </div>
   )
 }
+

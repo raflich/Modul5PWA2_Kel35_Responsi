@@ -52,3 +52,4 @@ export function useTents(params = {}) {
     refetch: () => fetchTents(false),
   }
 }
+

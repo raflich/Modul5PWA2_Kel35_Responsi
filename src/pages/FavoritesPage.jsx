@@ -252,3 +252,4 @@ export default function FavoritesPage({ onSelectTent, onNavigateCatalog }) {
     </div>
   )
 }
+

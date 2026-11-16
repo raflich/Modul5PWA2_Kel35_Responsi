@@ -92,3 +92,4 @@ export default {
   clearFavorites,
   subscribeFavorites,
 }
+

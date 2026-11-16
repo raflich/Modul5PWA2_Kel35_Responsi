@@ -84,3 +84,4 @@ export const generateId = () => {
   }
   return 'tent-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9)
 }
+

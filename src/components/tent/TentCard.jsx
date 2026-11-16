@@ -2,6 +2,7 @@ import { Users, Droplets, Star, Package, Edit, Trash2 } from 'lucide-react'
 import { formatRupiah } from '../../utils/helpers'
 import FavoriteButton from '../common/FavoriteButton'
 import ShareButton from '../common/ShareButton'
+import { useAuth } from '../../hooks/useAuth'
 
 export default function TentCard({
   tent,
@@ -10,6 +11,7 @@ export default function TentCard({
   onDelete,
   showManageActions = false,
 }) {
+  const { isAdmin } = useAuth()
   return (
     <article
       className="tent-card"
@@ -27,6 +29,21 @@ export default function TentCard({
       <div className="tent-card-header">
         <span className="badge badge--category">{tent.category}</span>
         <div className="tent-card-quick-actions" onClick={(e) => e.stopPropagation()}>
+          {onEdit && isAdmin && (
+            <button
+              type="button"
+              className="icon-btn"
+              style={{ width: '30px', height: '30px' }}
+              onClick={(e) => {
+                e.stopPropagation()
+                onEdit(tent)
+              }}
+              title="Edit spesifikasi produk"
+              aria-label="Edit produk"
+            >
+              <Edit size={13} />
+            </button>
+          )}
           <ShareButton tent={tent} size={15} />
           <FavoriteButton tent={tent} size={16} />
         </div>
@@ -113,3 +130,4 @@ export default function TentCard({
     </article>
   )
 }
+

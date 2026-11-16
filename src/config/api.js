@@ -4,7 +4,7 @@ import axios from 'axios'
 // Base URL & Supabase Key Configuration
 // Read from environment variables (.env) or fallback to offline store
 // ---------------------------------------------------------------------------
-const RAW_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').trim()
+const RAW_BASE_URL = (import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_SUPABASE_URL || '').trim()
 const BASE_URL = RAW_BASE_URL.replace(/\/rest\/v1\/?$/i, '').replace(/\/+$/, '')
 const SUPABASE_KEY = (
   import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
@@ -63,3 +63,4 @@ apiClient.interceptors.response.use(
 )
 
 export { apiClient, BASE_URL, SUPABASE_KEY, IS_SUPABASE }
+

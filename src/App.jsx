@@ -1,6 +1,5 @@
 import { useState, useEffect, lazy, Suspense } from 'react'
 import Header from './components/Header.jsx'
-import Footer from './components/Footer.jsx'
 import PWABadge from './components/PWABadge.jsx'
 import { RefreshCw } from 'lucide-react'
 import './App.css'
@@ -164,11 +163,9 @@ function App() {
 
       {/* PWA Installation & Offline State Prompt */}
       <PWABadge />
-
-      {/* Footer */}
-      <Footer onNavigateTab={(targetTab) => handleNavigate(targetTab)} />
     </div>
   )
 }
 
 export default App
+

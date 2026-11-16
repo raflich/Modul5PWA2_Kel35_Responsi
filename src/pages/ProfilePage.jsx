@@ -18,10 +18,15 @@ import {
   Trash2,
   ArrowRight,
   BookOpen,
+  LogIn,
+  LogOut,
+  ShieldCheck,
 } from 'lucide-react'
 import userService from '../services/userService'
 import { useFavorites } from '../hooks/useFavorites'
 import { useTents } from '../hooks/useTents'
+import { useAuth } from '../hooks/useAuth'
+import LoginModal from '../components/modals/LoginModal'
 import queryCache from '../utils/queryCache'
 import {
   getAllDrafts,
@@ -38,7 +43,9 @@ export default function ProfilePage({ onNavigate }) {
 
   const { tents } = useTents()
   const { count: favCount } = useFavorites()
+  const { user: authUser, isAdmin, logout } = useAuth()
   const [cacheCount, setCacheCount] = useState(() => queryCache.getCount())
+  const [loginModalOpen, setLoginModalOpen] = useState(false)
 
   // Edit Modal State
   const [isEditOpen, setIsEditOpen] = useState(false)
@@ -127,9 +134,32 @@ export default function ProfilePage({ onNavigate }) {
         </div>
 
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          {isAdmin ? (
+            <button
+              type="button"
+              className="btn btn--outline btn--sm"
+              onClick={() => {
+                logout()
+                setFeedback('Berhasil keluar dari mode Admin.')
+                setTimeout(() => setFeedback(''), 3000)
+              }}
+              title="Keluar dari mode admin"
+            >
+              <LogOut size={14} /> Logout Admin
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="btn btn--primary btn--sm"
+              onClick={() => setLoginModalOpen(true)}
+              title="Masuk sebagai Admin Toko"
+            >
+              <LogIn size={14} /> Login Admin
+            </button>
+          )}
           <button
             type="button"
-            className="btn btn--primary btn--sm"
+            className="btn btn--outline btn--sm"
             onClick={handleOpenEdit}
           >
             <Edit3 size={14} /> Ubah Profil
@@ -167,9 +197,26 @@ export default function ProfilePage({ onNavigate }) {
 
           {/* Student Info Details */}
           <div className="student-info-main">
-            <div className="student-name-row">
+            <div className="student-name-row" style={{ flexWrap: 'wrap', gap: '8px' }}>
               <h2 className="student-display-name">{profile.name}</h2>
               <span className="badge badge--kelompok">{profile.kelompok}</span>
+              {isAdmin ? (
+                <span className="badge badge--emerald" style={{ fontWeight: 700 }}>
+                  🛡️ Role: Admin (@{authUser.username || 'rafli'})
+                </span>
+              ) : (
+                <span
+                  className="badge"
+                  style={{
+                    fontWeight: 600,
+                    background: '#f1f5f9',
+                    color: '#475569',
+                    border: '1px solid #cbd5e1',
+                  }}
+                >
+                  👤 Role: Mode Pengunjung
+                </span>
+              )}
             </div>
 
             <div className="student-nim-row">
@@ -443,6 +490,12 @@ export default function ProfilePage({ onNavigate }) {
           </div>
         </div>
       )}
+      {/* Login Modal */}
+      <LoginModal
+        isOpen={loginModalOpen}
+        onClose={() => setLoginModalOpen(false)}
+      />
     </div>
   )
 }
+

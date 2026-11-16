@@ -145,3 +145,4 @@ class QueryCache {
 }
 
 export default new QueryCache()
+

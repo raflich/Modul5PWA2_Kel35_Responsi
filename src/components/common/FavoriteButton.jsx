@@ -27,3 +27,4 @@ export default function FavoriteButton({ tent, size = 18, showLabel = false, cla
     </button>
   )
 }
+

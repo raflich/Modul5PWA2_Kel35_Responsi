@@ -8,13 +8,14 @@ const USER_ID_KEY = 'tentcraft_user_id'
 
 const DEFAULT_PROFILE = {
   name: 'Muhammad Rafli Buchori',
+  username: 'rafli',
   nim: '21120124130095',
   kelompok: 'Kelompok 35',
   prodi: 'Teknik Komputer',
   universitas: 'Universitas Diponegoro',
   mataKuliah: 'Praktikum Pemrograman Perangkat Bergerak (PPB)',
   modul: 'Modul 5 — Progressive Web App (PWA) II',
-  role: 'Fullstack & PWA Developer',
+  role: 'admin',
   email: 'muhammadrafli@students.undip.ac.id',
   bio: 'Mahasiswa Teknik Komputer Universitas Diponegoro dengan minat pada mobile development, Progressive Web Apps, dan sistem terdistribusi. Menyenangi kegiatan outdoor, trekking gunung, dan riset teknologi web modern.',
   avatar: null,
@@ -84,3 +85,4 @@ export default {
   resetUserProfile,
   DEFAULT_PROFILE,
 }
+
