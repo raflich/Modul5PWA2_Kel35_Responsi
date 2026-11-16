@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%">
+  <defs>
+    <linearGradient id="tunGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#0369a1" />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" rx="16" fill="#1e293b" />
+  <ellipse cx="200" cy="245" rx="170" ry="20" fill="#0f172a" />
+  <!-- Tunnel Sections (3 Arches) -->
+  <!-- Back Arch -->
+  <path d="M 260 230 C 270 130, 350 130, 360 230 Z" fill="#075985" opacity="0.6" stroke="#38bdf8" stroke-width="2" />
+  <!-- Middle Arch -->
+  <path d="M 160 230 C 170 120, 290 120, 300 230 Z" fill="#0284c7" opacity="0.8" stroke="#38bdf8" stroke-width="2.5" />
+  <!-- Front Arch -->
+  <path d="M 50 230 C 60 110, 210 110, 220 230 Z" fill="url(#tunGrad)" stroke="#38bdf8" stroke-width="3" />
+  <!-- Connecting Ridge Fabric -->
+  <path d="M 135 110 L 230 120 L 310 130" fill="none" stroke="#7dd3fc" stroke-width="2" stroke-dasharray="4,4" />
+  <!-- Door Mesh -->
+  <path d="M 90 230 C 100 150, 170 150, 180 230 Z" fill="#f59e0b" opacity="0.85" />
+  <path d="M 110 230 C 115 170, 155 170, 160 230 Z" fill="#78350f" opacity="0.9" />
+  <!-- Windows -->
+  <rect x="235" y="165" width="30" height="25" rx="4" fill="#38bdf8" opacity="0.5" stroke="#bae6fd" stroke-width="1.5" />
+</svg>

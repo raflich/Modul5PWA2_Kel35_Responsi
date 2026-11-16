@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%">
+  <defs>
+    <linearGradient id="flyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ea580c" />
+      <stop offset="100%" stop-color="#c2410c" />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" rx="16" fill="#1e293b" />
+  <ellipse cx="200" cy="250" rx="160" ry="15" fill="#0f172a" />
+  <!-- Center Upright Poles -->
+  <line x1="120" y1="240" x2="120" y2="80" stroke="#94a3b8" stroke-width="4" stroke-linecap="round" />
+  <line x1="280" y1="240" x2="280" y2="80" stroke="#94a3b8" stroke-width="4" stroke-linecap="round" />
+  <!-- Tarp Fabric / Hexagonal Flysheet in A-Frame Pitch -->
+  <polygon points="120,80 280,80 350,210 200,180 50,210" fill="url(#flyGrad)" stroke="#fb923c" stroke-width="3" stroke-linejoin="round" />
+  <!-- Guy Lines to Ground -->
+  <line x1="120" y1="80" x2="40" y2="245" stroke="#fde047" stroke-width="2" stroke-dasharray="4,4" />
+  <line x1="280" y1="80" x2="360" y2="245" stroke="#fde047" stroke-width="2" stroke-dasharray="4,4" />
+  <line x1="50" y1="210" x2="30" y2="245" stroke="#fde047" stroke-width="2" />
+  <line x1="350" y1="210" x2="370" y2="245" stroke="#fde047" stroke-width="2" />
+  <!-- Ground Pegs -->
+  <circle cx="30" cy="245" r="4" fill="#fbbf24" />
+  <circle cx="370" cy="245" r="4" fill="#fbbf24" />
+</svg>

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%">
+  <defs>
+    <linearGradient id="metalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e2e8f0" />
+      <stop offset="100%" stop-color="#64748b" />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" rx="16" fill="#1e293b" />
+  <!-- Peg 1 (Straight Y-Beam) -->
+  <g transform="translate(110, 50) rotate(-15)">
+    <polygon points="10,0 20,0 18,170 12,185 6,170" fill="url(#metalGrad)" stroke="#cbd5e1" stroke-width="1.5" />
+    <circle cx="15" cy="15" r="5" fill="#f59e0b" />
+    <path d="M 15 15 Q 0 35 15 50" fill="none" stroke="#ef4444" stroke-width="3" />
+  </g>
+  <!-- Peg 2 (Titanium Hook Peg) -->
+  <g transform="translate(190, 40)">
+    <path d="M 25 20 C 15 5, 0 15, 0 30 L 0 190 L 5 195 L 10 190 L 10 30 C 10 24, 18 18, 22 25" fill="#38bdf8" stroke="#7dd3fc" stroke-width="2" />
+  </g>
+  <!-- Peg 3 (Heavy Duty Spiral Peg) -->
+  <g transform="translate(265, 50) rotate(15)">
+    <polygon points="10,0 22,0 20,170 14,185 8,170" fill="#f59e0b" stroke="#fbbf24" stroke-width="1.5" />
+    <circle cx="16" cy="15" r="5" fill="#1e293b" />
+  </g>
+  <!-- Outdoor Hammer / Mallet in foreground -->
+  <g transform="translate(120, 190) rotate(45)">
+    <!-- Handle -->
+    <rect x="0" y="0" width="16" height="110" rx="6" fill="#d97706" stroke="#92400e" stroke-width="2" />
+    <!-- Head -->
+    <rect x="-24" y="-12" width="64" height="28" rx="5" fill="#475569" stroke="#94a3b8" stroke-width="2" />
+    <!-- Hook tail -->
+    <path d="M 40 -2 Q 55 5 48 20" fill="none" stroke="#94a3b8" stroke-width="4" stroke-linecap="round" />
+  </g>
+</svg>
