@@ -21,6 +21,7 @@ import FavoriteButton from '../common/FavoriteButton'
 import ShareButton from '../common/ShareButton'
 import reviewService from '../../services/reviewService'
 import userService from '../../services/userService'
+import { useAuth } from '../../hooks/useAuth'
 
 export default function TentDetailModal({
   tent,
@@ -28,6 +29,7 @@ export default function TentDetailModal({
   onEdit,
   onDelete,
 }) {
+  const { isAdmin } = useAuth()
   const profile = userService.getUserProfile()
   const [reviewerName, setReviewerName] = useState(() => profile.name || 'Pengunjung')
   const [reviews, setReviews] = useState([])
@@ -385,7 +387,7 @@ export default function TentDetailModal({
           </div>
 
           <div className="detail-footer-right">
-            {onEdit && (
+            {isAdmin && onEdit && (
               <button
                 type="button"
                 className="btn btn--outline btn--sm"
@@ -398,7 +400,7 @@ export default function TentDetailModal({
                 <Edit size={14} /> Edit Produk
               </button>
             )}
-            {onDelete && (
+            {isAdmin && onDelete && (
               <button
                 type="button"
                 className="btn btn--outline btn--danger-subtle btn--sm"

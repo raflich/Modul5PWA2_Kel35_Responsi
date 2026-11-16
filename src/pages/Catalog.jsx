@@ -196,8 +196,8 @@ export default function Catalog({ onNavigate, initialTentId }) {
                 key={tent.id}
                 tent={tent}
                 onSelect={(t) => setSelectedTent(t)}
-                onEdit={(t) => onNavigate && onNavigate('Edit', t)}
-                onDelete={(t) => setDeleteTarget(t)}
+                onEdit={isAdmin ? (t) => onNavigate && onNavigate('Edit', t) : undefined}
+                onDelete={isAdmin ? (t) => setDeleteTarget(t) : undefined}
                 showManageActions={false}
               />
             ))}
@@ -220,8 +220,8 @@ export default function Catalog({ onNavigate, initialTentId }) {
         <TentDetailModal
           tent={selectedTent}
           onClose={() => setSelectedTent(null)}
-          onEdit={(t) => onNavigate && onNavigate('Edit', t)}
-          onDelete={(t) => setDeleteTarget(t)}
+          onEdit={isAdmin ? (t) => onNavigate && onNavigate('Edit', t) : undefined}
+          onDelete={isAdmin ? (t) => setDeleteTarget(t) : undefined}
         />
       )}
 
